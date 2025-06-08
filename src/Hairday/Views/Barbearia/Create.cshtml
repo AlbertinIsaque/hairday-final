@@ -1,0 +1,105 @@
+﻿@model Hairday.Models.Barbearia
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout_Barbearia.cshtml";
+}
+
+<div class="container">
+    <div class="frame frame-title">
+        <h1>Cadastre sua barbearia</h1>
+        <p class="subtitle">O próximo passo do seu negócio é aqui!</p>
+    </div>
+
+    <div class="form-container">
+        <div class="frame frame-form">
+            <form method="post" onsubmit="return prepararFormulario()">
+                <table class="form-table">
+                    <tr>
+                        <td>@Html.LabelFor(m => m.nome)</td>
+                        <td>@Html.TextBoxFor(m => m.nome, new { placeholder = "João Feminos", @class = "form-control" })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(m => m.cidade)</td>
+                        <td>@Html.TextBoxFor(m => m.cidade, new { placeholder = "Minas Gerais", @class = "form-control" })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.Label("CNPJ")</td>
+                        <td>
+                            <input type="text"
+                                   name="CNPJ_barbearia"
+                                   id="cnpj"
+                                   maxlength="18"
+                                   placeholder="00.000.000/0000-00"
+                                   class="form-control"
+                                   oninput="formatarCNPJ(this)" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(m => m.telefone)</td>
+                        <td>@Html.TextBoxFor(m => m.telefone, new { placeholder = "(00) 00000-0000", @class = "form-control" })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(m => m.email)</td>
+                        <td>@Html.TextBoxFor(m => m.email, new { type = "email", placeholder = "abc@gmail.com", @class = "form-control" })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(m => m.senha)</td>
+                        <td>@Html.PasswordFor(m => m.senha, new { placeholder = "**********", @class = "form-control", id = "senha" })</td>
+                    </tr>
+                    <tr>
+                        <td><label for="confirmarSenha">Confirmar Senha</label></td>
+                        <td><input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="**********" class="form-control" /></td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(m => m.endereco)</td>
+                        <td>@Html.TextBoxFor(m => m.endereco, new { placeholder = "Rua das Flores, Bairro Pereira", @class = "form-control" })</td>
+                    </tr>
+                </table>
+
+                <div class="frame frame-button mt-3">
+                    <button type="submit" class="cadastrar-btn">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Aplica a máscara enquanto o usuário digita
+        function formatarCNPJ(campo) {
+            let valor = campo.value.replace(/\D/g, '');
+            if (valor.length > 14) valor = valor.substring(0, 14);
+            valor = valor.replace(/^(\d{2})(\d)/, '$1.$2');
+            valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+            campo.value = valor;
+        }
+
+        // Remove a máscara do CNPJ antes de enviar o formulário
+        function limparMascaraCNPJ() {
+            const campo = document.getElementById("cnpj");
+            campo.value = campo.value.replace(/\D/g, '');
+        }
+
+        // Validação de senha + limpeza do CNPJ antes de submeter
+        function prepararFormulario() {
+            const senha = document.getElementById("senha").value;
+            const confirmar = document.getElementById("confirmarSenha").value;
+
+            if (senha !== confirmar) {
+                alert("As senhas não coincidem.");
+                return false;
+            }
+
+            limparMascaraCNPJ();
+            return true;
+        }
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
